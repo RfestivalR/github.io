@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>死にざま宣伝所</title>
+  <title>死にざま掲示板</title>
 
   <style>
     * {
@@ -122,7 +122,7 @@
 <body>
 
 <header>
-  <h1>死にざま宣伝所</h1>
+  <h1>死にざま掲示板</h1>
   <p>あなたの好きな「死にざま」を布教しよう。</p>
 </header>
 
@@ -150,12 +150,12 @@
       すべて
     </button>
 
-    <button class="tag" onclick="filterPosts('作品A')">
-      作品A
+    <button class="tag" onclick="filterPosts('勇者刑に処す')">
+      勇者刑に処す
     </button>
 
-    <button class="tag" onclick="filterPosts('作品B')">
-      作品B
+    <button class="tag" onclick="filterPosts('勇者のクズ')">
+      勇者のクズ
     </button>
 
   </section>
@@ -165,17 +165,17 @@
 
     <!-- サンプル投稿1 -->
 
-    <article class="post" data-work="作品A">
+    <article class="post" data-work="勇者刑に処す">
 
       <div class="work">
-        作品：作品A
+        作品：勇者刑に処す
       </div>
 
       <button
         class="spoiler-button"
         onclick="toggleSpoiler(this)"
       >
-        ネタバレを表示
+        投稿を表示
       </button>
 
       <div class="spoiler">
@@ -198,17 +198,17 @@
 
     <!-- サンプル投稿2 -->
 
-    <article class="post" data-work="作品B">
+    <article class="post" data-work="勇者のクズ">
 
       <div class="work">
-        作品：作品B
+        作品：勇者のクズ
       </div>
 
       <button
         class="spoiler-button"
         onclick="toggleSpoiler(this)"
       >
-        ネタバレを表示
+        投稿を表示
       </button>
 
       <div class="spoiler">
@@ -244,7 +244,7 @@ function toggleSpoiler(button) {
   if (spoiler.style.display === "block") {
 
     spoiler.style.display = "none";
-    button.textContent = "ネタバレを表示";
+    button.textContent = "投稿を表示";
 
   } else {
 
