@@ -3,13 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>死にざま掲示板</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -41,8 +38,6 @@
       padding: 30px 20px;
     }
 
-    /* ネタバレ警告 */
-
     .warning {
       background: #fff;
       border: 2px solid #555;
@@ -51,11 +46,70 @@
       text-align: center;
     }
 
-    .warning h2 {
+    .warning h2 { margin-top: 0; }
+
+    /* 投稿フォーム */
+
+    .form-section {
+      background: white;
+      padding: 25px;
+      border-radius: 8px;
+      margin-bottom: 35px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .form-section h2 {
       margin-top: 0;
     }
 
-    /* 作品タグ */
+    label {
+      display: block;
+      font-weight: bold;
+      margin-top: 18px;
+      margin-bottom: 6px;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #bbb;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .submit-button {
+      margin-top: 20px;
+      padding: 12px 20px;
+      border: none;
+      background: #333;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .submit-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    #otherWorkArea {
+      display: none;
+    }
+
+    #message {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    /* タグ */
 
     .tags {
       margin-bottom: 30px;
@@ -75,7 +129,7 @@
       background: #bbb;
     }
 
-    /* 投稿カード */
+    /* 投稿 */
 
     .post {
       background: white;
@@ -86,12 +140,18 @@
     }
 
     .work {
-      font-size: 13px;
-      color: #777;
+      font-size: 15px;
+      font-weight: bold;
+    }
+
+    .spoiler-range {
+      margin-top: 5px;
+      font-size: 14px;
+      color: #b00020;
     }
 
     .spoiler-button {
-      margin-top: 10px;
+      margin-top: 12px;
       padding: 10px 15px;
       border: none;
       background: #333;
@@ -106,8 +166,15 @@
     }
 
     .spoiler img {
+      display: block;
       max-width: 100%;
+      max-height: 700px;
+      margin-top: 15px;
       border-radius: 5px;
+    }
+
+    .description {
+      white-space: pre-wrap;
     }
 
     footer {
@@ -130,20 +197,84 @@
 
   <section class="warning">
     <h2>⚠ ネタバレ注意</h2>
-
     <p>
       このサイトには、登場人物の死亡に関する<br>
       重大なネタバレが含まれています。
     </p>
-
-    <p>
-      各投稿の詳細は、ボタンを押すまで表示されません。
-    </p>
+    <p>各投稿の詳細は、ボタンを押すまで表示されません。</p>
   </section>
 
 
-  <section class="tags">
+  <!-- 投稿フォーム -->
 
+  <section class="form-section">
+    <h2>死にざまを投稿する</h2>
+
+    <form id="postForm">
+
+      <label for="workCategory">作品</label>
+      <select id="workCategory" required>
+        <option value="">選択してください</option>
+        <option value="勇者刑に処す">勇者刑に処す</option>
+        <option value="勇者のクズ">勇者のクズ</option>
+        <option value="その他">その他</option>
+      </select>
+
+      <div id="otherWorkArea">
+        <label for="otherWork">作品名</label>
+        <input
+          type="text"
+          id="otherWork"
+          maxlength="100"
+          placeholder="作品名を入力してください"
+        >
+      </div>
+
+      <label for="spoilerRange">ネタバレ範囲</label>
+      <input
+        type="text"
+        id="spoilerRange"
+        maxlength="100"
+        placeholder="例：原作8巻まで / アニメ12話まで"
+        required
+      >
+
+      <label for="characterName">キャラクター名</label>
+      <input
+        type="text"
+        id="characterName"
+        maxlength="100"
+        required
+      >
+
+      <label for="description">紹介文</label>
+      <textarea
+        id="description"
+        maxlength="3000"
+        placeholder="好きな死にざまについて紹介してください"
+        required
+      ></textarea>
+
+      <label for="image">画像（任意・5MBまで）</label>
+      <input
+        type="file"
+        id="image"
+        accept="image/*"
+      >
+
+      <button type="submit" class="submit-button" id="submitButton">
+        投稿する
+      </button>
+
+      <div id="message"></div>
+
+    </form>
+  </section>
+
+
+  <!-- 絞り込み -->
+
+  <section class="tags">
     <h2>作品から探す</h2>
 
     <button class="tag" onclick="filterPosts('all')">
@@ -158,71 +289,16 @@
       勇者のクズ
     </button>
 
+    <button class="tag" onclick="filterPosts('その他')">
+      その他
+    </button>
   </section>
 
 
+  <!-- 投稿一覧 -->
+
   <section id="posts">
-
-    <!-- サンプル投稿1 -->
-
-    <article class="post" data-work="勇者刑に処す">
-
-      <div class="work">
-        作品：勇者刑に処す
-      </div>
-
-      <button
-        class="spoiler-button"
-        onclick="toggleSpoiler(this)"
-      >
-        投稿を表示
-      </button>
-
-      <div class="spoiler">
-
-        <h2>キャラクター名</h2>
-
-        <p>
-          ここに好きな死にざまについての紹介文が入ります。
-        </p>
-
-        <!--
-        画像を使う場合：
-        <img src="画像URL">
-        -->
-
-      </div>
-
-    </article>
-
-
-    <!-- サンプル投稿2 -->
-
-    <article class="post" data-work="勇者のクズ">
-
-      <div class="work">
-        作品：勇者のクズ
-      </div>
-
-      <button
-        class="spoiler-button"
-        onclick="toggleSpoiler(this)"
-      >
-        投稿を表示
-      </button>
-
-      <div class="spoiler">
-
-        <h2>キャラクター名</h2>
-
-        <p>
-          ここに紹介文が入ります。
-        </p>
-
-      </div>
-
-    </article>
-
+    読み込み中...
   </section>
 
 </main>
@@ -233,52 +309,297 @@
 </footer>
 
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
 
-/* ネタバレ開閉 */
+const SUPABASE_URL =
+  "https://uywrlzndjjpkqwabxdyb.supabase.co";
 
-function toggleSpoiler(button) {
+const SUPABASE_KEY =
+  "ここにPUBLISHABLE_KEY";
 
-  const spoiler = button.nextElementSibling;
+const supabaseClient =
+  supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  if (spoiler.style.display === "block") {
 
-    spoiler.style.display = "none";
-    button.textContent = "投稿を表示";
+/* その他を選択した場合だけ作品名欄を表示 */
 
+const workCategory = document.getElementById("workCategory");
+const otherWorkArea = document.getElementById("otherWorkArea");
+const otherWork = document.getElementById("otherWork");
+
+workCategory.addEventListener("change", function () {
+
+  if (this.value === "その他") {
+    otherWorkArea.style.display = "block";
+    otherWork.required = true;
   } else {
-
-    spoiler.style.display = "block";
-    button.textContent = "ネタバレを隠す";
-
+    otherWorkArea.style.display = "none";
+    otherWork.required = false;
+    otherWork.value = "";
   }
+
+});
+
+
+/* 投稿一覧を取得 */
+
+async function loadPosts() {
+
+  const postsArea = document.getElementById("posts");
+
+  const { data, error } = await supabaseClient
+    .from("posts")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    postsArea.textContent = "投稿の読み込みに失敗しました。";
+    console.error(error);
+    return;
+  }
+
+  postsArea.textContent = "";
+
+  if (!data || data.length === 0) {
+    postsArea.textContent = "まだ投稿はありません。";
+    return;
+  }
+
+  data.forEach(post => {
+    createPostCard(post);
+  });
+
 }
 
 
-/* 作品タグ絞り込み */
+/* 投稿カードを作成 */
 
-function filterPosts(work) {
+function createPostCard(post) {
+
+  const postsArea = document.getElementById("posts");
+
+  const article = document.createElement("article");
+  article.className = "post";
+
+  /*
+    DBには実際の作品名を保存。
+    指定2作品以外は自動的に「その他」扱いにする。
+  */
+  if (
+    post.work_title === "勇者刑に処す" ||
+    post.work_title === "勇者のクズ"
+  ) {
+    article.dataset.category = post.work_title;
+  } else {
+    article.dataset.category = "その他";
+  }
+
+  const work = document.createElement("div");
+  work.className = "work";
+  work.textContent = "作品：" + post.work_title;
+
+  const range = document.createElement("div");
+  range.className = "spoiler-range";
+  range.textContent = "⚠ " + post.spoiler_range + "のネタバレ";
+
+  const button = document.createElement("button");
+  button.className = "spoiler-button";
+  button.textContent = "投稿を表示";
+
+  const spoiler = document.createElement("div");
+  spoiler.className = "spoiler";
+
+  const character = document.createElement("h2");
+  character.textContent = post.character_name;
+
+  const description = document.createElement("p");
+  description.className = "description";
+  description.textContent = post.description;
+
+  spoiler.appendChild(character);
+  spoiler.appendChild(description);
+
+  if (post.image_url) {
+
+    const image = document.createElement("img");
+    image.src = post.image_url;
+    image.alt = "投稿画像";
+    image.loading = "lazy";
+
+    spoiler.appendChild(image);
+  }
+
+  button.addEventListener("click", function () {
+
+    if (spoiler.style.display === "block") {
+      spoiler.style.display = "none";
+      button.textContent = "投稿を表示";
+    } else {
+      spoiler.style.display = "block";
+      button.textContent = "ネタバレを隠す";
+    }
+
+  });
+
+  article.appendChild(work);
+  article.appendChild(range);
+  article.appendChild(button);
+  article.appendChild(spoiler);
+
+  postsArea.appendChild(article);
+}
+
+
+/* 投稿 */
+
+document
+  .getElementById("postForm")
+  .addEventListener("submit", async function (event) {
+
+    event.preventDefault();
+
+    const button = document.getElementById("submitButton");
+    const message = document.getElementById("message");
+
+    button.disabled = true;
+    message.textContent = "投稿中...";
+
+    try {
+
+      const category = workCategory.value;
+
+      const actualWorkTitle =
+        category === "その他"
+          ? otherWork.value.trim()
+          : category;
+
+      if (!actualWorkTitle) {
+        throw new Error("作品名を入力してください。");
+      }
+
+      const spoilerRange =
+        document.getElementById("spoilerRange").value.trim();
+
+      const characterName =
+        document.getElementById("characterName").value.trim();
+
+      const description =
+        document.getElementById("description").value.trim();
+
+      const imageFile =
+        document.getElementById("image").files[0];
+
+      let imageUrl = null;
+
+
+      /* 画像アップロード */
+
+      if (imageFile) {
+
+        if (!imageFile.type.startsWith("image/")) {
+          throw new Error("画像ファイルを選択してください。");
+        }
+
+        if (imageFile.size > 5 * 1024 * 1024) {
+          throw new Error("画像は5MB以下にしてください。");
+        }
+
+        const extension =
+          imageFile.name.split(".").pop().replace(/[^a-zA-Z0-9]/g, "");
+
+        const fileName =
+          crypto.randomUUID() + "." + extension;
+
+        const { error: uploadError } =
+          await supabaseClient.storage
+            .from("post-images")
+            .upload(fileName, imageFile, {
+              cacheControl: "3600",
+              upsert: false
+            });
+
+        if (uploadError) {
+          throw uploadError;
+        }
+
+        const { data: publicUrlData } =
+          supabaseClient.storage
+            .from("post-images")
+            .getPublicUrl(fileName);
+
+        imageUrl = publicUrlData.publicUrl;
+      }
+
+
+      /* データベースへ保存 */
+
+      const { error: insertError } =
+        await supabaseClient
+          .from("posts")
+          .insert([{
+            work_title: actualWorkTitle,
+            spoiler_range: spoilerRange,
+            character_name: characterName,
+            description: description,
+            image_url: imageUrl
+          }]);
+
+      if (insertError) {
+        throw insertError;
+      }
+
+
+      message.textContent = "投稿しました！";
+
+      document.getElementById("postForm").reset();
+
+      otherWorkArea.style.display = "none";
+      otherWork.required = false;
+
+      await loadPosts();
+
+    } catch (error) {
+
+      console.error(error);
+      message.textContent =
+        "投稿に失敗しました：" + error.message;
+
+    } finally {
+
+      button.disabled = false;
+
+    }
+
+  });
+
+
+/* タグ絞り込み */
+
+function filterPosts(category) {
 
   const posts = document.querySelectorAll(".post");
 
   posts.forEach(post => {
 
     if (
-      work === "all" ||
-      post.dataset.work === work
+      category === "all" ||
+      post.dataset.category === category
     ) {
-
       post.style.display = "block";
-
     } else {
-
       post.style.display = "none";
-
     }
 
   });
 
 }
+
+
+/* 最初に投稿一覧を読み込む */
+
+loadPosts();
 
 </script>
 
