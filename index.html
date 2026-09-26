@@ -1,311 +1,328 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>死にざま掲示板</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>死にざま掲示板</title>
 
-  <style>
-    * { box-sizing: border-box; }
+<style>
+* { box-sizing: border-box; }
 
-    body {
-      margin: 0;
-      font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", sans-serif;
-      background: #f5f5f5;
-      color: #333;
-    }
+body {
+  margin: 0;
+  font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", sans-serif;
+  background: #f5f5f5;
+  color: #333;
+}
 
-    header {
-      background: #222;
-      color: white;
-      text-align: center;
-      padding: 40px 20px;
-    }
+header {
+  background: #222;
+  color: white;
+  text-align: center;
+  padding: 40px 20px;
+}
 
-    header h1 {
-      margin: 0 0 10px;
-      font-size: 30px;
-    }
+header h1 { margin: 0 0 10px; }
 
-    header p {
-      margin: 0;
-      font-size: 14px;
-    }
+main {
+  max-width: 800px;
+  margin: auto;
+  padding: 30px 20px;
+}
 
-    main {
-      max-width: 800px;
-      margin: auto;
-      padding: 30px 20px;
-    }
+.warning, .form-section, .admin-section {
+  background: white;
+  padding: 25px;
+  margin-bottom: 30px;
+  border-radius: 8px;
+}
 
-    .warning {
-      background: #fff;
-      border: 2px solid #555;
-      padding: 25px;
-      margin-bottom: 35px;
-      text-align: center;
-    }
+.warning {
+  border: 2px solid #555;
+  text-align: center;
+}
 
-    .warning h2 { margin-top: 0; }
+label {
+  display: block;
+  font-weight: bold;
+  margin-top: 18px;
+  margin-bottom: 6px;
+}
 
-    /* 投稿フォーム */
+input, select, textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  font-size: 16px;
+}
 
-    .form-section {
-      background: white;
-      padding: 25px;
-      border-radius: 8px;
-      margin-bottom: 35px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
+textarea {
+  min-height: 120px;
+  resize: vertical;
+}
 
-    .form-section h2 {
-      margin-top: 0;
-    }
+button {
+  cursor: pointer;
+}
 
-    label {
-      display: block;
-      font-weight: bold;
-      margin-top: 18px;
-      margin-bottom: 6px;
-    }
+.submit-button, .admin-button {
+  margin-top: 18px;
+  padding: 11px 18px;
+  border: none;
+  border-radius: 4px;
+  background: #333;
+  color: white;
+}
 
-    input,
-    select,
-    textarea {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #bbb;
-      border-radius: 4px;
-      font-size: 16px;
-    }
+button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
 
-    textarea {
-      min-height: 120px;
-      resize: vertical;
-    }
+#otherWorkArea {
+  display: none;
+}
 
-    .submit-button {
-      margin-top: 20px;
-      padding: 12px 20px;
-      border: none;
-      background: #333;
-      color: white;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 16px;
-    }
+.tags {
+  margin-bottom: 30px;
+}
 
-    .submit-button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+.tag {
+  background: #ddd;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 15px;
+  margin: 4px;
+}
 
-    #otherWorkArea {
-      display: none;
-    }
+.post {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+}
 
-    #message {
-      margin-top: 15px;
-      font-weight: bold;
-    }
+.work {
+  font-weight: bold;
+}
 
-    /* タグ */
+.spoiler-range {
+  margin-top: 5px;
+  color: #b00020;
+}
 
-    .tags {
-      margin-bottom: 30px;
-    }
+.spoiler-button {
+  margin-top: 12px;
+  padding: 10px 15px;
+  border: none;
+  background: #333;
+  color: white;
+  border-radius: 4px;
+}
 
-    .tag {
-      display: inline-block;
-      background: #ddd;
-      border: none;
-      border-radius: 20px;
-      padding: 8px 15px;
-      margin: 4px;
-      cursor: pointer;
-    }
+.spoiler {
+  display: none;
+  margin-top: 20px;
+}
 
-    .tag:hover {
-      background: #bbb;
-    }
+.description {
+  white-space: pre-wrap;
+}
 
-    /* 投稿 */
+.spoiler img {
+  display: block;
+  max-width: 100%;
+  max-height: 700px;
+  margin-top: 15px;
+  border-radius: 5px;
+}
 
-    .post {
-      background: white;
-      border-radius: 8px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
+.delete-button {
+  display: block;
+  margin-top: 20px;
+  padding: 8px 14px;
+  border: 1px solid #b00020;
+  background: white;
+  color: #b00020;
+  border-radius: 4px;
+}
 
-    .work {
-      font-size: 15px;
-      font-weight: bold;
-    }
+.admin-status {
+  margin-top: 12px;
+}
 
-    .spoiler-range {
-      margin-top: 5px;
-      font-size: 14px;
-      color: #b00020;
-    }
-
-    .spoiler-button {
-      margin-top: 12px;
-      padding: 10px 15px;
-      border: none;
-      background: #333;
-      color: white;
-      cursor: pointer;
-      border-radius: 4px;
-    }
-
-    .spoiler {
-      display: none;
-      margin-top: 20px;
-    }
-
-    .spoiler img {
-      display: block;
-      max-width: 100%;
-      max-height: 700px;
-      margin-top: 15px;
-      border-radius: 5px;
-    }
-
-    .description {
-      white-space: pre-wrap;
-    }
-
-    footer {
-      text-align: center;
-      padding: 30px;
-      color: #888;
-      font-size: 12px;
-    }
-  </style>
+footer {
+  text-align: center;
+  padding: 30px;
+  color: #888;
+  font-size: 12px;
+}
+</style>
 </head>
 
 <body>
 
 <header>
-  <h1>死にざま掲示板</h1>
-  <p>あなたの好きな「死にざま」お待ちしています。</p>
+<h1>死にざま掲示板</h1>
+<p>あなたの好きな「死にざま」お待ちしています。</p>
 </header>
 
 <main>
 
-  <section class="warning">
-    <h2>⚠ ネタバレ注意</h2>
-    <p>
-      このサイトには、登場人物の死亡に関する<br>
-      重大なネタバレが含まれています。
-    </p>
-    <p>各投稿の詳細は、ボタンを押すまで表示されません。</p>
-  </section>
+<section class="warning">
+<h2>⚠ ネタバレ注意</h2>
+<p>
+このサイトには、登場人物の死亡に関する<br>
+重大なネタバレが含まれています。
+</p>
+<p>各投稿の詳細は、ボタンを押すまで表示されません。</p>
+</section>
 
 
-  <!-- 投稿フォーム -->
+<!-- 投稿フォーム -->
 
-  <section class="form-section">
-    <h2>死にざまを投稿する</h2>
+<section class="form-section">
 
-    <form id="postForm">
+<h2>死にざまを投稿する</h2>
 
-      <label for="workCategory">作品</label>
-      <select id="workCategory" required>
-        <option value="">選択してください</option>
-        <option value="勇者刑に処す">勇者刑に処す</option>
-        <option value="勇者のクズ">勇者のクズ</option>
-        <option value="その他">その他</option>
-      </select>
+<form id="postForm">
 
-      <div id="otherWorkArea">
-        <label for="otherWork">作品名</label>
-        <input
-          type="text"
-          id="otherWork"
-          maxlength="100"
-          placeholder="作品名を入力してください"
-        >
-      </div>
+<label>作品</label>
 
-      <label for="spoilerRange">ネタバレ範囲</label>
-      <input
-        type="text"
-        id="spoilerRange"
-        maxlength="100"
-        placeholder="例：原作8巻まで / アニメ12話まで"
-        required
-      >
+<select id="workCategory" required>
+<option value="">選択してください</option>
+<option value="勇者刑に処す">勇者刑に処す</option>
+<option value="勇者のクズ">勇者のクズ</option>
+<option value="その他">その他</option>
+</select>
 
-      <label for="characterName">キャラクター名</label>
-      <input
-        type="text"
-        id="characterName"
-        maxlength="100"
-        required
-      >
+<div id="otherWorkArea">
+<label>作品名</label>
+<input
+  type="text"
+  id="otherWork"
+  maxlength="100"
+  placeholder="作品名を入力してください"
+>
+</div>
 
-      <label for="description">紹介文</label>
-      <textarea
-        id="description"
-        maxlength="3000"
-        placeholder="好きな死にざまについて紹介してください"
-        required
-      ></textarea>
+<label>ネタバレ範囲</label>
 
-      <label for="image">画像（任意・5MBまで）</label>
-      <input
-        type="file"
-        id="image"
-        accept="image/*"
-      >
+<input
+  type="text"
+  id="spoilerRange"
+  maxlength="100"
+  placeholder="例：原作8巻まで / アニメ12話まで"
+  required
+>
 
-      <button type="submit" class="submit-button" id="submitButton">
-        投稿する
-      </button>
+<label>キャラクター名</label>
 
-      <div id="message"></div>
+<input
+  type="text"
+  id="characterName"
+  maxlength="100"
+  required
+>
 
-    </form>
-  </section>
+<label>紹介文</label>
 
+<textarea
+  id="description"
+  maxlength="3000"
+  required
+></textarea>
 
-  <!-- 絞り込み -->
+<label>画像（任意・5MBまで）</label>
 
-  <section class="tags">
-    <h2>作品から探す</h2>
+<input
+  type="file"
+  id="image"
+  accept="image/*"
+>
 
-    <button class="tag" onclick="filterPosts('all')">
-      すべて
-    </button>
+<button
+  type="submit"
+  class="submit-button"
+  id="submitButton"
+>
+投稿する
+</button>
 
-    <button class="tag" onclick="filterPosts('勇者刑に処す')">
-      勇者刑に処す
-    </button>
+<div id="message"></div>
 
-    <button class="tag" onclick="filterPosts('勇者のクズ')">
-      勇者のクズ
-    </button>
-
-    <button class="tag" onclick="filterPosts('その他')">
-      その他
-    </button>
-  </section>
+</form>
+</section>
 
 
-  <!-- 投稿一覧 -->
+<!-- タグ -->
 
-  <section id="posts">
-    読み込み中...
-  </section>
+<section class="tags">
+
+<h2>作品から探す</h2>
+
+<button class="tag" onclick="filterPosts('all')">すべて</button>
+<button class="tag" onclick="filterPosts('勇者刑に処す')">勇者刑に処す</button>
+<button class="tag" onclick="filterPosts('勇者のクズ')">勇者のクズ</button>
+<button class="tag" onclick="filterPosts('その他')">その他</button>
+
+</section>
+
+
+<!-- 投稿一覧 -->
+
+<section id="posts">
+読み込み中...
+</section>
+
+
+<!-- 管理者 -->
+
+<section class="admin-section">
+
+<h2>管理者</h2>
+
+<div id="loginArea">
+
+<label>メールアドレス</label>
+<input type="email" id="adminEmail">
+
+<label>パスワード</label>
+<input type="password" id="adminPassword">
+
+<button
+  class="admin-button"
+  onclick="adminLogin()"
+>
+ログイン
+</button>
+
+</div>
+
+<div id="logoutArea" style="display:none;">
+
+<p>管理者としてログイン中</p>
+
+<button
+  class="admin-button"
+  onclick="adminLogout()"
+>
+ログアウト
+</button>
+
+</div>
+
+<div id="adminMessage" class="admin-status"></div>
+
+</section>
 
 </main>
 
 
 <footer>
-  非公式ファン企画
+非公式ファン企画
 </footer>
 
 
@@ -314,272 +331,596 @@
 <script>
 
 const SUPABASE_URL =
-  "https://uywrlzndjjpkqwabxdyb.supabase.co";
+"https://uywrlzndjjpkqwabxdyb.supabase.co";
 
 const SUPABASE_KEY =
-  "sb_publishable_Nd6Owfr821WUv0uylQ6u2A_TDnAxqfw";
+"sb_publishable_Nd6Owfr821WUv0uylQ6u2A_TDnAxqfw";
 
 const supabaseClient =
-  supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let isAdmin = false;
 
 
-/* その他を選択した場合だけ作品名欄を表示 */
+/* その他 */
 
-const workCategory = document.getElementById("workCategory");
-const otherWorkArea = document.getElementById("otherWorkArea");
-const otherWork = document.getElementById("otherWork");
+const workCategory =
+document.getElementById("workCategory");
 
-workCategory.addEventListener("change", function () {
+const otherWorkArea =
+document.getElementById("otherWorkArea");
+
+const otherWork =
+document.getElementById("otherWork");
+
+workCategory.addEventListener("change", function() {
 
   if (this.value === "その他") {
+
     otherWorkArea.style.display = "block";
     otherWork.required = true;
+
   } else {
+
     otherWorkArea.style.display = "none";
     otherWork.required = false;
     otherWork.value = "";
+
   }
 
 });
 
 
-/* 投稿一覧を取得 */
+/* ログイン状態確認 */
+
+async function checkLogin() {
+
+  const { data } =
+    await supabaseClient.auth.getUser();
+
+  isAdmin = !!data.user;
+
+  updateAdminArea();
+
+  await loadPosts();
+}
+
+
+function updateAdminArea() {
+
+  document.getElementById("loginArea").style.display =
+    isAdmin ? "none" : "block";
+
+  document.getElementById("logoutArea").style.display =
+    isAdmin ? "block" : "none";
+}
+
+
+/* 管理者ログイン */
+
+async function adminLogin() {
+
+  const email =
+    document.getElementById("adminEmail").value.trim();
+
+  const password =
+    document.getElementById("adminPassword").value;
+
+  const message =
+    document.getElementById("adminMessage");
+
+  message.textContent = "ログイン中...";
+
+  const { data, error } =
+    await supabaseClient.auth.signInWithPassword({
+      email: email,
+      password: password
+    });
+
+  if (error) {
+
+    message.textContent =
+      "ログインに失敗しました。";
+
+    return;
+  }
+
+  isAdmin = true;
+
+  message.textContent =
+    "ログインしました。";
+
+  updateAdminArea();
+
+  await loadPosts();
+}
+
+
+/* ログアウト */
+
+async function adminLogout() {
+
+  await supabaseClient.auth.signOut();
+
+  isAdmin = false;
+
+  document.getElementById("adminMessage").textContent =
+    "ログアウトしました。";
+
+  updateAdminArea();
+
+  await loadPosts();
+}
+
+
+/* 投稿取得 */
 
 async function loadPosts() {
 
-  const postsArea = document.getElementById("posts");
+  const postsArea =
+    document.getElementById("posts");
 
-  const { data, error } = await supabaseClient
-    .from("posts")
-    .select("*")
-    .order("created_at", { ascending: false });
+  const { data, error } =
+    await supabaseClient
+      .from("posts")
+      .select("*")
+      .order("created_at", {
+        ascending: false
+      });
 
   if (error) {
-    postsArea.textContent = "投稿の読み込みに失敗しました。";
+
+    postsArea.textContent =
+      "投稿の読み込みに失敗しました。";
+
     console.error(error);
+
     return;
   }
 
   postsArea.textContent = "";
 
   if (!data || data.length === 0) {
-    postsArea.textContent = "まだ投稿はありません。";
+
+    postsArea.textContent =
+      "まだ投稿はありません。";
+
     return;
   }
 
   data.forEach(post => {
     createPostCard(post);
   });
-
 }
 
 
-/* 投稿カードを作成 */
+/* 投稿カード */
 
 function createPostCard(post) {
 
-  const postsArea = document.getElementById("posts");
+  const article =
+    document.createElement("article");
 
-  const article = document.createElement("article");
   article.className = "post";
 
-  /*
-    DBには実際の作品名を保存。
-    指定2作品以外は自動的に「その他」扱いにする。
-  */
   if (
     post.work_title === "勇者刑に処す" ||
     post.work_title === "勇者のクズ"
   ) {
-    article.dataset.category = post.work_title;
+
+    article.dataset.category =
+      post.work_title;
+
   } else {
-    article.dataset.category = "その他";
+
+    article.dataset.category =
+      "その他";
   }
 
-  const work = document.createElement("div");
+
+  const work =
+    document.createElement("div");
+
   work.className = "work";
-  work.textContent = "作品：" + post.work_title;
 
-  const range = document.createElement("div");
+  work.textContent =
+    "作品：" + post.work_title;
+
+
+  const range =
+    document.createElement("div");
+
   range.className = "spoiler-range";
-  range.textContent = "⚠ " + post.spoiler_range + "のネタバレ";
 
-  const button = document.createElement("button");
-  button.className = "spoiler-button";
-  button.textContent = "投稿を表示";
+  range.textContent =
+    "⚠ " + post.spoiler_range + "のネタバレ";
 
-  const spoiler = document.createElement("div");
+
+  const spoilerButton =
+    document.createElement("button");
+
+  spoilerButton.className =
+    "spoiler-button";
+
+  spoilerButton.textContent =
+    "投稿を表示";
+
+
+  const spoiler =
+    document.createElement("div");
+
   spoiler.className = "spoiler";
 
-  const character = document.createElement("h2");
-  character.textContent = post.character_name;
 
-  const description = document.createElement("p");
-  description.className = "description";
-  description.textContent = post.description;
+  const character =
+    document.createElement("h2");
+
+  character.textContent =
+    post.character_name;
+
+
+  const description =
+    document.createElement("p");
+
+  description.className =
+    "description";
+
+  description.textContent =
+    post.description;
+
 
   spoiler.appendChild(character);
   spoiler.appendChild(description);
 
+
   if (post.image_url) {
 
-    const image = document.createElement("img");
-    image.src = post.image_url;
-    image.alt = "投稿画像";
-    image.loading = "lazy";
+    const img =
+      document.createElement("img");
 
-    spoiler.appendChild(image);
+    img.src = post.image_url;
+    img.alt = "投稿画像";
+    img.loading = "lazy";
+
+    spoiler.appendChild(img);
   }
 
-  button.addEventListener("click", function () {
 
-    if (spoiler.style.display === "block") {
-      spoiler.style.display = "none";
-      button.textContent = "投稿を表示";
-    } else {
-      spoiler.style.display = "block";
-      button.textContent = "ネタバレを隠す";
+  spoilerButton.addEventListener(
+    "click",
+    function() {
+
+      if (spoiler.style.display === "block") {
+
+        spoiler.style.display = "none";
+
+        spoilerButton.textContent =
+          "投稿を表示";
+
+      } else {
+
+        spoiler.style.display = "block";
+
+        spoilerButton.textContent =
+          "ネタバレを隠す";
+      }
     }
+  );
 
-  });
+
+  /* 管理者だけ削除ボタン */
+
+  if (isAdmin) {
+
+    const deleteButton =
+      document.createElement("button");
+
+    deleteButton.className =
+      "delete-button";
+
+    deleteButton.textContent =
+      "この投稿を削除";
+
+    deleteButton.addEventListener(
+      "click",
+      function() {
+        deletePost(post);
+      }
+    );
+
+    spoiler.appendChild(deleteButton);
+  }
+
 
   article.appendChild(work);
   article.appendChild(range);
-  article.appendChild(button);
+  article.appendChild(spoilerButton);
   article.appendChild(spoiler);
 
-  postsArea.appendChild(article);
+  document
+    .getElementById("posts")
+    .appendChild(article);
 }
 
 
 /* 投稿 */
 
 document
-  .getElementById("postForm")
-  .addEventListener("submit", async function (event) {
+.getElementById("postForm")
+.addEventListener(
+"submit",
+async function(event) {
 
-    event.preventDefault();
+  event.preventDefault();
 
-    const button = document.getElementById("submitButton");
-    const message = document.getElementById("message");
+  const button =
+    document.getElementById("submitButton");
 
-    button.disabled = true;
-    message.textContent = "投稿中...";
+  const message =
+    document.getElementById("message");
 
-    try {
-
-      const category = workCategory.value;
-
-      const actualWorkTitle =
-        category === "その他"
-          ? otherWork.value.trim()
-          : category;
-
-      if (!actualWorkTitle) {
-        throw new Error("作品名を入力してください。");
-      }
-
-      const spoilerRange =
-        document.getElementById("spoilerRange").value.trim();
-
-      const characterName =
-        document.getElementById("characterName").value.trim();
-
-      const description =
-        document.getElementById("description").value.trim();
-
-      const imageFile =
-        document.getElementById("image").files[0];
-
-      let imageUrl = null;
+  button.disabled = true;
+  message.textContent = "投稿中...";
 
 
-      /* 画像アップロード */
+  try {
 
-      if (imageFile) {
+    const category =
+      workCategory.value;
 
-        if (!imageFile.type.startsWith("image/")) {
-          throw new Error("画像ファイルを選択してください。");
-        }
+    const actualWorkTitle =
+      category === "その他"
+        ? otherWork.value.trim()
+        : category;
 
-        if (imageFile.size > 5 * 1024 * 1024) {
-          throw new Error("画像は5MB以下にしてください。");
-        }
-
-        const extension =
-          imageFile.name.split(".").pop().replace(/[^a-zA-Z0-9]/g, "");
-
-        const fileName =
-          crypto.randomUUID() + "." + extension;
-
-        const { error: uploadError } =
-          await supabaseClient.storage
-            .from("post-images")
-            .upload(fileName, imageFile, {
-              cacheControl: "3600",
-              upsert: false
-            });
-
-        if (uploadError) {
-          throw uploadError;
-        }
-
-        const { data: publicUrlData } =
-          supabaseClient.storage
-            .from("post-images")
-            .getPublicUrl(fileName);
-
-        imageUrl = publicUrlData.publicUrl;
-      }
-
-
-      /* データベースへ保存 */
-
-      const { error: insertError } =
-        await supabaseClient
-          .from("posts")
-          .insert([{
-            work_title: actualWorkTitle,
-            spoiler_range: spoilerRange,
-            character_name: characterName,
-            description: description,
-            image_url: imageUrl
-          }]);
-
-      if (insertError) {
-        throw insertError;
-      }
-
-
-      message.textContent = "投稿しました！";
-
-      document.getElementById("postForm").reset();
-
-      otherWorkArea.style.display = "none";
-      otherWork.required = false;
-
-      await loadPosts();
-
-    } catch (error) {
-
-      console.error(error);
-      message.textContent =
-        "投稿に失敗しました：" + error.message;
-
-    } finally {
-
-      button.disabled = false;
-
+    if (!actualWorkTitle) {
+      throw new Error(
+        "作品名を入力してください。"
+      );
     }
 
-  });
+
+    const spoilerRange =
+      document
+        .getElementById("spoilerRange")
+        .value.trim();
+
+    const characterName =
+      document
+        .getElementById("characterName")
+        .value.trim();
+
+    const description =
+      document
+        .getElementById("description")
+        .value.trim();
+
+    const imageFile =
+      document
+        .getElementById("image")
+        .files[0];
+
+    let imageUrl = null;
 
 
-/* タグ絞り込み */
+    /* 画像 */
+
+    if (imageFile) {
+
+      if (
+        !imageFile.type.startsWith("image/")
+      ) {
+        throw new Error(
+          "画像ファイルを選択してください。"
+        );
+      }
+
+      if (
+        imageFile.size >
+        5 * 1024 * 1024
+      ) {
+        throw new Error(
+          "画像は5MB以下にしてください。"
+        );
+      }
+
+
+      const extension =
+        imageFile.name
+          .split(".")
+          .pop()
+          .replace(
+            /[^a-zA-Z0-9]/g,
+            ""
+          );
+
+
+      const fileName =
+        crypto.randomUUID()
+        + "."
+        + extension;
+
+
+      const { error: uploadError } =
+        await supabaseClient.storage
+          .from("post-images")
+          .upload(
+            fileName,
+            imageFile,
+            {
+              cacheControl: "3600",
+              upsert: false
+            }
+          );
+
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+
+      const { data } =
+        supabaseClient.storage
+          .from("post-images")
+          .getPublicUrl(fileName);
+
+
+      imageUrl =
+        data.publicUrl;
+    }
+
+
+    /* DB */
+
+    const { error } =
+      await supabaseClient
+        .from("posts")
+        .insert([{
+          work_title:
+            actualWorkTitle,
+
+          spoiler_range:
+            spoilerRange,
+
+          character_name:
+            characterName,
+
+          description:
+            description,
+
+          image_url:
+            imageUrl
+        }]);
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    message.textContent =
+      "投稿しました！";
+
+
+    document
+      .getElementById("postForm")
+      .reset();
+
+
+    otherWorkArea.style.display =
+      "none";
+
+    otherWork.required = false;
+
+
+    await loadPosts();
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    message.textContent =
+      "投稿に失敗しました："
+      + error.message;
+
+  } finally {
+
+    button.disabled = false;
+  }
+
+});
+
+
+/* 投稿削除 */
+
+async function deletePost(post) {
+
+  const confirmed =
+    confirm(
+      "この投稿を削除しますか？\nこの操作は元に戻せません。"
+    );
+
+  if (!confirmed) {
+    return;
+  }
+
+
+  try {
+
+    /*
+      画像がある場合は先にStorageから削除
+    */
+
+    if (post.image_url) {
+
+      const marker =
+        "/post-images/";
+
+      const position =
+        post.image_url.indexOf(marker);
+
+      if (position !== -1) {
+
+        const filePath =
+          decodeURIComponent(
+            post.image_url.substring(
+              position + marker.length
+            )
+          );
+
+        const { error: imageError } =
+          await supabaseClient.storage
+            .from("post-images")
+            .remove([filePath]);
+
+
+        if (imageError) {
+          throw imageError;
+        }
+      }
+    }
+
+
+    /*
+      DBから投稿削除
+    */
+
+    const { error } =
+      await supabaseClient
+        .from("posts")
+        .delete()
+        .eq("id", post.id);
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    alert("削除しました。");
+
+    await loadPosts();
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(
+      "削除に失敗しました："
+      + error.message
+    );
+  }
+}
+
+
+/* 絞り込み */
 
 function filterPosts(category) {
 
-  const posts = document.querySelectorAll(".post");
+  const posts =
+    document.querySelectorAll(".post");
 
   posts.forEach(post => {
 
@@ -587,19 +928,22 @@ function filterPosts(category) {
       category === "all" ||
       post.dataset.category === category
     ) {
-      post.style.display = "block";
+
+      post.style.display =
+        "block";
+
     } else {
-      post.style.display = "none";
+
+      post.style.display =
+        "none";
     }
-
   });
-
 }
 
 
-/* 最初に投稿一覧を読み込む */
+/* 起動 */
 
-loadPosts();
+checkLogin();
 
 </script>
 
