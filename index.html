@@ -1,1 +1,286 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <title>死にざま宣伝所</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", sans-serif;
+      background: #f5f5f5;
+      color: #333;
+    }
+
+    header {
+      background: #222;
+      color: white;
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    header h1 {
+      margin: 0 0 10px;
+      font-size: 30px;
+    }
+
+    header p {
+      margin: 0;
+      font-size: 14px;
+    }
+
+    main {
+      max-width: 800px;
+      margin: auto;
+      padding: 30px 20px;
+    }
+
+    /* ネタバレ警告 */
+
+    .warning {
+      background: #fff;
+      border: 2px solid #555;
+      padding: 25px;
+      margin-bottom: 35px;
+      text-align: center;
+    }
+
+    .warning h2 {
+      margin-top: 0;
+    }
+
+    /* 作品タグ */
+
+    .tags {
+      margin-bottom: 30px;
+    }
+
+    .tag {
+      display: inline-block;
+      background: #ddd;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 15px;
+      margin: 4px;
+      cursor: pointer;
+    }
+
+    .tag:hover {
+      background: #bbb;
+    }
+
+    /* 投稿カード */
+
+    .post {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .work {
+      font-size: 13px;
+      color: #777;
+    }
+
+    .spoiler-button {
+      margin-top: 10px;
+      padding: 10px 15px;
+      border: none;
+      background: #333;
+      color: white;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .spoiler {
+      display: none;
+      margin-top: 20px;
+    }
+
+    .spoiler img {
+      max-width: 100%;
+      border-radius: 5px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px;
+      color: #888;
+      font-size: 12px;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>死にざま宣伝所</h1>
+  <p>あなたの好きな「死にざま」を布教しよう。</p>
+</header>
+
+<main>
+
+  <section class="warning">
+    <h2>⚠ ネタバレ注意</h2>
+
+    <p>
+      このサイトには、登場人物の死亡に関する<br>
+      重大なネタバレが含まれています。
+    </p>
+
+    <p>
+      各投稿の詳細は、ボタンを押すまで表示されません。
+    </p>
+  </section>
+
+
+  <section class="tags">
+
+    <h2>作品から探す</h2>
+
+    <button class="tag" onclick="filterPosts('all')">
+      すべて
+    </button>
+
+    <button class="tag" onclick="filterPosts('作品A')">
+      作品A
+    </button>
+
+    <button class="tag" onclick="filterPosts('作品B')">
+      作品B
+    </button>
+
+  </section>
+
+
+  <section id="posts">
+
+    <!-- サンプル投稿1 -->
+
+    <article class="post" data-work="作品A">
+
+      <div class="work">
+        作品：作品A
+      </div>
+
+      <button
+        class="spoiler-button"
+        onclick="toggleSpoiler(this)"
+      >
+        ネタバレを表示
+      </button>
+
+      <div class="spoiler">
+
+        <h2>キャラクター名</h2>
+
+        <p>
+          ここに好きな死にざまについての紹介文が入ります。
+        </p>
+
+        <!--
+        画像を使う場合：
+        <img src="画像URL">
+        -->
+
+      </div>
+
+    </article>
+
+
+    <!-- サンプル投稿2 -->
+
+    <article class="post" data-work="作品B">
+
+      <div class="work">
+        作品：作品B
+      </div>
+
+      <button
+        class="spoiler-button"
+        onclick="toggleSpoiler(this)"
+      >
+        ネタバレを表示
+      </button>
+
+      <div class="spoiler">
+
+        <h2>キャラクター名</h2>
+
+        <p>
+          ここに紹介文が入ります。
+        </p>
+
+      </div>
+
+    </article>
+
+  </section>
+
+</main>
+
+
+<footer>
+  非公式ファン企画
+</footer>
+
+
+<script>
+
+/* ネタバレ開閉 */
+
+function toggleSpoiler(button) {
+
+  const spoiler = button.nextElementSibling;
+
+  if (spoiler.style.display === "block") {
+
+    spoiler.style.display = "none";
+    button.textContent = "ネタバレを表示";
+
+  } else {
+
+    spoiler.style.display = "block";
+    button.textContent = "ネタバレを隠す";
+
+  }
+}
+
+
+/* 作品タグ絞り込み */
+
+function filterPosts(work) {
+
+  const posts = document.querySelectorAll(".post");
+
+  posts.forEach(post => {
+
+    if (
+      work === "all" ||
+      post.dataset.work === work
+    ) {
+
+      post.style.display = "block";
+
+    } else {
+
+      post.style.display = "none";
+
+    }
+
+  });
+
+}
+
+</script>
+
+</body>
+</html>
