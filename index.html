@@ -62,9 +62,7 @@ textarea {
   resize: vertical;
 }
 
-button {
-  cursor: pointer;
-}
+button { cursor: pointer; }
 
 .submit-button, .admin-button {
   margin-top: 18px;
@@ -80,13 +78,9 @@ button:disabled {
   cursor: not-allowed;
 }
 
-#otherWorkArea {
-  display: none;
-}
+#otherWorkArea { display: none; }
 
-.tags {
-  margin-bottom: 30px;
-}
+.tags { margin-bottom: 30px; }
 
 .tag {
   background: #ddd;
@@ -104,17 +98,22 @@ button:disabled {
   box-shadow: 0 2px 8px rgba(0,0,0,.08);
 }
 
-.work {
-  font-weight: bold;
-}
+.work { font-weight: bold; }
 
 .spoiler-range {
   margin-top: 5px;
   color: #b00020;
 }
 
-.spoiler-button {
+.post-buttons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
   margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.spoiler-button {
   padding: 10px 15px;
   border: none;
   background: #333;
@@ -122,14 +121,27 @@ button:disabled {
   border-radius: 4px;
 }
 
+.like-button {
+  padding: 9px 15px;
+  border: 1px solid #aaa;
+  background: white;
+  color: #333;
+  border-radius: 20px;
+  font-size: 16px;
+}
+
+.like-button.liked {
+  border-color: #d35b78;
+  color: #c63e61;
+  background: #fff3f6;
+}
+
 .spoiler {
   display: none;
   margin-top: 20px;
 }
 
-.description {
-  white-space: pre-wrap;
-}
+.description { white-space: pre-wrap; }
 
 .spoiler img {
   display: block;
@@ -149,9 +161,7 @@ button:disabled {
   border-radius: 4px;
 }
 
-.admin-status {
-  margin-top: 12px;
-}
+.admin-status { margin-top: 12px; }
 
 footer {
   text-align: center;
@@ -159,16 +169,92 @@ footer {
   color: #888;
   font-size: 12px;
 }
+
+/* =========================
+   入場時ポップアップ
+   ========================= */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.72);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal-box {
+  background: white;
+  width: 100%;
+  max-width: 550px;
+  max-height: 85vh;
+  overflow-y: auto;
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: 0 5px 30px rgba(0,0,0,.35);
+}
+
+.modal-box h2 {
+  margin-top: 0;
+  text-align: center;
+}
+
+.modal-box p {
+  line-height: 1.8;
+}
+
+.modal-button {
+  display: block;
+  width: 100%;
+  margin-top: 25px;
+  padding: 13px;
+  border: none;
+  border-radius: 5px;
+  background: #222;
+  color: white;
+  font-size: 16px;
+}
 </style>
 </head>
 
 <body>
 
+<!-- 入場時注意書き -->
+<div id="noticeModal" class="modal-overlay">
+  <div class="modal-box">
+
+    <h2>⚠ ご利用前にご確認ください</h2>
+
+    <!-- ↓ここを書き換えれば注意書きを変更できます -->
+    <p>
+      このサイトには、登場人物の死亡に関する
+      <strong>重大なネタバレ</strong>が含まれています。
+    </p>
+
+    <p>
+      投稿一覧では作品名とネタバレ範囲のみ表示され、
+      キャラクター名・紹介文・画像は「投稿を表示」を
+      押すまで表示されません。
+    </p>
+
+    <p>
+      閲覧は自己責任でお願いいたします。
+    </p>
+    <!-- ↑ここまで -->
+
+    <button class="modal-button" onclick="closeNotice()">
+      確認しました
+    </button>
+
+  </div>
+</div>
+
+
 <header>
 <h1>死にざま掲示板</h1>
-<p>あなたの好きな「死にざま」<br>
-お待ちしています。
-</p>
+<p>あなたの好きな「死にざま」お待ちしています。</p>
 </header>
 
 <main>
@@ -176,7 +262,8 @@ footer {
 <section class="warning">
 <h2>⚠ ネタバレ注意</h2>
 <p>
-このサイトには登場人物の死亡に関する重大なネタバレが含まれています。
+このサイトには、登場人物の死亡に関する<br>
+重大なネタバレが含まれています。
 </p>
 <p>各投稿の詳細は、ボタンを押すまで表示されません。</p>
 </section>
@@ -228,11 +315,12 @@ footer {
   required
 >
 
-<label>コメント</label>
+<label>紹介文</label>
 
 <textarea
   id="description"
   maxlength="3000"
+  placeholder="好きな死にざまについて紹介してください"
   required
 ></textarea>
 
@@ -335,7 +423,7 @@ const SUPABASE_URL =
 "https://uywrlzndjjpkqwabxdyb.supabase.co";
 
 const SUPABASE_KEY =
-"sb_publishable_Nd6Owfr821WUv0uylQ6u2A_TDnAxqfw";
+"ここにPUBLISHABLE_KEY";
 
 const supabaseClient =
 supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -343,7 +431,24 @@ supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let isAdmin = false;
 
 
-/* その他 */
+/* =========================
+   注意書き
+   ========================= */
+
+function closeNotice() {
+  localStorage.setItem("noticeConfirmed", "true");
+  document.getElementById("noticeModal").style.display = "none";
+}
+
+/* 過去に確認済みなら最初から表示しない */
+if (localStorage.getItem("noticeConfirmed") === "true") {
+  document.getElementById("noticeModal").style.display = "none";
+}
+
+
+/* =========================
+   その他作品
+   ========================= */
 
 const workCategory =
 document.getElementById("workCategory");
@@ -372,7 +477,9 @@ workCategory.addEventListener("change", function() {
 });
 
 
-/* ログイン状態確認 */
+/* =========================
+   管理者ログイン状態
+   ========================= */
 
 async function checkLogin() {
 
@@ -412,7 +519,7 @@ async function adminLogin() {
 
   message.textContent = "ログイン中...";
 
-  const { data, error } =
+  const { error } =
     await supabaseClient.auth.signInWithPassword({
       email: email,
       password: password
@@ -454,7 +561,9 @@ async function adminLogout() {
 }
 
 
-/* 投稿取得 */
+/* =========================
+   投稿取得
+   ========================= */
 
 async function loadPosts() {
 
@@ -495,7 +604,9 @@ async function loadPosts() {
 }
 
 
-/* 投稿カード */
+/* =========================
+   投稿カード
+   ========================= */
 
 function createPostCard(post) {
 
@@ -503,6 +614,7 @@ function createPostCard(post) {
     document.createElement("article");
 
   article.className = "post";
+
 
   if (
     post.work_title === "勇者刑に処す" ||
@@ -537,6 +649,16 @@ function createPostCard(post) {
     "⚠ " + post.spoiler_range + "のネタバレ";
 
 
+  /* ボタン置き場 */
+
+  const buttonArea =
+    document.createElement("div");
+
+  buttonArea.className = "post-buttons";
+
+
+  /* ネタバレボタン */
+
   const spoilerButton =
     document.createElement("button");
 
@@ -546,6 +668,49 @@ function createPostCard(post) {
   spoilerButton.textContent =
     "投稿を表示";
 
+
+  /* いいねボタン */
+
+  const likeButton =
+    document.createElement("button");
+
+  likeButton.className =
+    "like-button";
+
+  const likeKey =
+    "liked_post_" + post.id;
+
+  const alreadyLiked =
+    localStorage.getItem(likeKey) === "true";
+
+  if (alreadyLiked) {
+    likeButton.classList.add("liked");
+  }
+
+  updateLikeButton(
+    likeButton,
+    post.likes,
+    alreadyLiked
+  );
+
+
+  likeButton.addEventListener(
+    "click",
+    async function() {
+
+      await likePost(
+        post,
+        likeButton
+      );
+    }
+  );
+
+
+  buttonArea.appendChild(spoilerButton);
+  buttonArea.appendChild(likeButton);
+
+
+  /* ネタバレ内容 */
 
   const spoiler =
     document.createElement("div");
@@ -609,7 +774,7 @@ function createPostCard(post) {
   );
 
 
-  /* 管理者だけ削除ボタン */
+  /* 管理者削除 */
 
   if (isAdmin) {
 
@@ -635,7 +800,7 @@ function createPostCard(post) {
 
   article.appendChild(work);
   article.appendChild(range);
-  article.appendChild(spoilerButton);
+  article.appendChild(buttonArea);
   article.appendChild(spoiler);
 
   document
@@ -644,7 +809,99 @@ function createPostCard(post) {
 }
 
 
-/* 投稿 */
+/* =========================
+   いいね
+   ========================= */
+
+function updateLikeButton(
+  button,
+  count,
+  liked
+) {
+
+  const number =
+    Number(count) || 0;
+
+  button.textContent =
+    (liked ? "♥ " : "♡ ") + number;
+}
+
+
+async function likePost(
+  post,
+  button
+) {
+
+  const likeKey =
+    "liked_post_" + post.id;
+
+
+  /* この端末ですでに押している */
+
+  if (
+    localStorage.getItem(likeKey)
+    === "true"
+  ) {
+
+    return;
+  }
+
+
+  button.disabled = true;
+
+
+  const { error } =
+    await supabaseClient.rpc(
+      "increment_like",
+      {
+        post_id: post.id
+      }
+    );
+
+
+  if (error) {
+
+    console.error(error);
+
+    alert(
+      "いいねに失敗しました。"
+    );
+
+    button.disabled = false;
+
+    return;
+  }
+
+
+  /* 成功したら端末に記録 */
+
+  localStorage.setItem(
+    likeKey,
+    "true"
+  );
+
+
+  post.likes =
+    (Number(post.likes) || 0) + 1;
+
+
+  button.classList.add("liked");
+
+
+  updateLikeButton(
+    button,
+    post.likes,
+    true
+  );
+
+
+  button.disabled = false;
+}
+
+
+/* =========================
+   投稿
+   ========================= */
 
 document
 .getElementById("postForm")
@@ -675,6 +932,7 @@ async function(event) {
         : category;
 
     if (!actualWorkTitle) {
+
       throw new Error(
         "作品名を入力してください。"
       );
@@ -711,15 +969,18 @@ async function(event) {
       if (
         !imageFile.type.startsWith("image/")
       ) {
+
         throw new Error(
           "画像ファイルを選択してください。"
         );
       }
 
+
       if (
         imageFile.size >
         5 * 1024 * 1024
       ) {
+
         throw new Error(
           "画像は5MB以下にしてください。"
         );
@@ -771,12 +1032,13 @@ async function(event) {
     }
 
 
-    /* DB */
+    /* DBへ保存 */
 
     const { error } =
       await supabaseClient
         .from("posts")
         .insert([{
+
           work_title:
             actualWorkTitle,
 
@@ -791,6 +1053,7 @@ async function(event) {
 
           image_url:
             imageUrl
+
         }]);
 
 
@@ -833,7 +1096,9 @@ async function(event) {
 });
 
 
-/* 投稿削除 */
+/* =========================
+   投稿削除
+   ========================= */
 
 async function deletePost(post) {
 
@@ -849,9 +1114,7 @@ async function deletePost(post) {
 
   try {
 
-    /*
-      画像がある場合は先にStorageから削除
-    */
+    /* 画像削除 */
 
     if (post.image_url) {
 
@@ -883,9 +1146,7 @@ async function deletePost(post) {
     }
 
 
-    /*
-      DBから投稿削除
-    */
+    /* 投稿削除 */
 
     const { error } =
       await supabaseClient
@@ -897,6 +1158,16 @@ async function deletePost(post) {
     if (error) {
       throw error;
     }
+
+
+    /*
+      この端末に残った
+      いいね履歴も削除
+    */
+
+    localStorage.removeItem(
+      "liked_post_" + post.id
+    );
 
 
     alert("削除しました。");
@@ -916,7 +1187,9 @@ async function deletePost(post) {
 }
 
 
-/* 絞り込み */
+/* =========================
+   絞り込み
+   ========================= */
 
 function filterPosts(category) {
 
